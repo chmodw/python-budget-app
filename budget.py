@@ -62,6 +62,12 @@ d.withdraw(10.15, "groceries")
 d.withdraw(15.89, "restaurant and more food")
 d.transfer(50.00, "Clothing")
 
+d2 = Category("Transport")
+d2.deposit(500, "initial deposit ")
+d2.withdraw(90.15, "groceries")
+d2.withdraw(12.89, "restaurant and more food")
+d2.transfer(70.00, "Clothing")
+
 
 def create_spend_chart(categories):
 
@@ -85,9 +91,13 @@ def create_spend_chart(categories):
 
     # creating the top part of the chart
     for i in reversed(range(11)):
-        chart += (" "*(3-len(str(i*10))))+str(i*10)+"| \n"
+        chart += (" "*(3-len(str(i*10))))+str(i*10)+"|"
+        for data in chartData:
+            if data["percentage"] > i*10:
+                chart += "o "
+        chart += "\n"
 
     return chart
 
 
-print(create_spend_chart([d]))
+print(create_spend_chart([d, d2]))
