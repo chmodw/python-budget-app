@@ -45,28 +45,22 @@ class Category:
 
     def transfer(self, amount="", categorey=""):
         if self.check_funds(amount):
-            self.ledger.append({
-                "amount": amount*-1,
-                "description": "Transfer to " + categorey
-            })
-            return True
+            try:
+                self.ledger.append({
+                    "amount": amount*-1,
+                    "description": "Transfer to " + categorey.category
+                })
+                categorey.ledger.append({
+                    "amount": amount,
+                    "description": "Transfer from " + self.category
+                })
+                return True
+            except:
+                return False
         return False
 
     def check_funds(self, amount):
-        return True if self.get_balance() > amount else False
-
-
-d = Category("Food")
-d.deposit(1000, "initial deposit ")
-d.withdraw(10.15, "groceries")
-d.withdraw(15.89, "restaurant and more food")
-d.transfer(50.00, "Clothing")
-
-d2 = Category("Transport")
-d2.deposit(500, "initial deposit ")
-d2.withdraw(90.15, "groceries")
-d2.withdraw(12.89, "restaurant and more food")
-d2.transfer(70.00, "Clothing")
+        return True if self.get_balance() >= amount else False
 
 
 def create_spend_chart(categories):
@@ -96,27 +90,49 @@ def create_spend_chart(categories):
 
     # creating the top part of the chart
     for i in reversed(range(11)):
-        chart += (" "*(3-len(str(i*10))))+str(i*10)+"| "
+        chart += "\n" + (" "*(3-len(str(i*10))))+str(i*10)+"| "
         for data in chartData:
             if data["percentage"] > i*10:
                 chart += "o  "
-        chart += "\n"
+            else:
+                chart += "   "
 
-    dotLine = " "*4 + "-"*(len(chartData)*3+1)
+    dotLine = "\n" + " "*4 + "-"*(len(chartData)*3+1)
 
     # adding category names to the chart
     for i in range(maxCatLength):
-        categoryNames += " "*5
+        categoryNames += "\n" + " "*5
         for data in chartData:
             try:
                 categoryNames += list(data["category"])[i] + "  "
             except:
                 categoryNames += " "*3
-        categoryNames += "\n"
-        # get longest catergory name from the list range()
 
-    return "Percentage spent by category \n" + chart + dotLine + "\n" + categoryNames
-    # return int(maxCatLength)
+    return "Percentage spent by category" + chart + dotLine + categoryNames
+
+# # print("Percentage spent by category\n100|          \n 90|          \n 80|          \n 70|    o     \n 60|    o     \n 50|    o     \n 40|    o     \n 30|    o     \n 20|    o  o  \n 10|    o  o  \n  0| o  o  o  \n    ----------\n     B  F  E  \n     u  o  n  \n     s  o  t  \n     i  d  e  \n     n     r  \n     e     t  \n     s     a  \n     s     i  \n           n  \n           m  \n           e  \n           n  \n           t  ")
 
 
-print(create_spend_chart([d, d2]))
+# print("done")
+food = Category("Food")
+entertainment = Category("Entertainment")
+business = Category("Business")
+
+food.deposit(900, "deposit")
+entertainment.deposit(900, "deposit")
+business.deposit(900, "deposit")
+food.withdraw(105.55)
+entertainment.withdraw(33.40)
+business.withdraw(10.99)
+
+print(create_spend_chart([business, food, entertainment]))
+
+
+# Problem is with percentage calculation
+
+# fix it and do the job assignment
+
+
+# f = open("s.txt", "w+")
+# f.write(create_spend_chart([business, food, entertainment]))
+# f.close()
