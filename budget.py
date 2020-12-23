@@ -72,7 +72,9 @@ d2.transfer(70.00, "Clothing")
 def create_spend_chart(categories):
 
     chartData = []
+    categoryNames = ""
     chart = ""
+    maxCatLength = 0
 
     for item in categories:
         deposits = 0.0
@@ -84,6 +86,9 @@ def create_spend_chart(categories):
             else:
                 deposits += ledgerItem["amount"]
 
+        maxCatLength = len(item.category) if len(
+            item.category) > maxCatLength else maxCatLength
+
         chartData.append({
             "category": item.category,
             "percentage": int((deposits - (deposits - withdraws)) / deposits * 100)
@@ -91,13 +96,27 @@ def create_spend_chart(categories):
 
     # creating the top part of the chart
     for i in reversed(range(11)):
-        chart += (" "*(3-len(str(i*10))))+str(i*10)+"|"
+        chart += (" "*(3-len(str(i*10))))+str(i*10)+"| "
         for data in chartData:
             if data["percentage"] > i*10:
-                chart += "o "
+                chart += "o  "
         chart += "\n"
 
-    return chart
+    dotLine = " "*4 + "-"*(len(chartData)*3+1)
+
+    # adding category names to the chart
+    for i in range(maxCatLength):
+        categoryNames += " "*5
+        for data in chartData:
+            try:
+                categoryNames += list(data["category"])[i] + "  "
+            except:
+                categoryNames += " "*3
+        categoryNames += "\n"
+        # get longest catergory name from the list range()
+
+    return "Percentage spent by category \n" + chart + dotLine + "\n" + categoryNames
+    # return int(maxCatLength)
 
 
 print(create_spend_chart([d, d2]))
